@@ -1,0 +1,53 @@
+[
+    {
+      "categoryName": {
+        "title": "category name",
+        "type": ["string"]
+      },
+      "description": {
+        "title": "description",
+        "type": ["string", "object"]
+      },
+      "available": {
+        "title": "available",
+        "type": ["boolean"]
+      }
+    },
+    {
+      "layerName": {
+        "title": "layer name",
+        "type": ["string"]
+      },
+      "description": {
+        "title": "description",
+        "type": ["string", "object"]
+      },
+      "category": {
+        "title": "category",
+        "type": ["string"]
+      },
+      "available": {
+        "title": "available",
+        "type": ["boolean"]
+      }
+    },
+    {
+      "name": {
+        "title": "name",
+        "type": ["string"]
+      },
+      "surname": {
+        "title": "surname",
+        "type": ["string"]
+      },
+      "email": {
+        "title": "email",
+        "type": ["string"]
+      },
+      "password": {
+        "title": "password",
+        "type": ["string"]
+      }
+   }
+  ]
+  

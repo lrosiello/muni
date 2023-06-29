@@ -1,0 +1,19 @@
+{
+   "categoryName" : "zac",
+   "description" : "azaza",
+   "available" : true
+}
+
+{
+   "layerName" : "azaza",
+   "description" : "azaaaaaaza",
+   "category" : "zac",
+   "available" : true
+}
+
+{
+   "name": "Mansgasdshsdgagas",
+   "surname": "Roasgasdhsdhsgasgassales",
+   "email": "gero@as.com",
+   "password": "$2b$10$TxJSK37G1yOPwanY/4NspeP91GG6/EryWMi6e1yC0.6aIJHZfMb0C"
+}
