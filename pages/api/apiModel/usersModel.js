@@ -6,13 +6,13 @@ export async function getUsers() {
 }
 
 export async function getUserById(userId) {
-  const getUserById = await query("SELECT * FROM users WHERE id = $1", [userId]);
-  return getUserById;
+  const userById = await query("SELECT * FROM users WHERE id = $1", [userId]);
+  return userById;
 }
 
 export async function getUserByEmail(email) {
-  const getUserByEmail = await query("SELECT * FROM users WHERE email = $1", [email]);
-  return getUserByEmail;
+  const userByEmail = await query("SELECT * FROM users WHERE email = $1", [email]);
+  return userByEmail;
 }
 
 export async function insertUser(name, surname, email, password) {

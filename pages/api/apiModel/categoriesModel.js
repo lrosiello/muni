@@ -5,12 +5,12 @@ export async function getCategories() {
   return categories;
 }
 
-export async function getCategoriesById(categoryId) {
-  const getCategoryById = await query(
+export async function getCategoryById(categoryId) {
+  const categoryById = await query(
     "SELECT * FROM categories WHERE id = $1",
     [categoryId]
   );
-  return getCategoryById;
+  return categoryById;
 }
 
 export async function insertCategory(categoryName, description, available) {

@@ -1,23 +1,23 @@
 
 import { areAllDataFilled, isItExists, fixSpaces } from "../utils/validations";
 import { typesValidating } from "../utils/typesValidating";
-import { getCategoriesById, deleteCategory, updateCategory } from "../apiModel/categoriesModel";
+import { getCategoryById, deleteCategory, updateCategory } from "../apiModel/categoriesModel";
 
 export default async function handler(req, res) {
   let message;
 
   //GET ELEMENT BY ID
 
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     const categoryId = req.query.id;
     if (isNaN(categoryId)) {
       res.status(500).json({ error: "The id value is not valid" });
     } else {
-      const getCategoryById = await getCategoriesById(categoryId);
-      if (getCategoryById.rowCount === 0) {
+      const categoryById = await getCategoryById(categoryId);
+      if (categoryById.rowCount === 0) {
         res.status(500).json({ error: "This category does not exist" });
       } else {
-        res.status(200).json({ getCategoryById });
+        res.status(200).json({ categoryById });
       }
     }
   }

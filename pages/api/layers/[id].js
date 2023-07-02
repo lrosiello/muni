@@ -2,7 +2,7 @@
 import { areAllDataFilled, isItExists, fixSpaces } from "../utils/validations";
 import { typesValidating } from "../utils/typesValidating";
 import {
-  getLayersById,
+  getLayerById,
   deleteLayer,
   updateLayer,
 } from "../apiModel/layersModel";
@@ -12,16 +12,16 @@ export default async function handler(req, res) {
 
   //GET ELEMENT BY ID
 
-  if (req.method === "POST") {
+  if (req.method === "GET") {
     const layerId = req.query.id;
     if (isNaN(layerId)) {
       res.status(500).json({ error: "The id value is not valid" });
     } else {
-      const getLayerById = await getLayersById(layerId);
-      if (getLayerById.rowCount === 0) {
+      const layerById = await getLayerById(layerId);
+      if (layerById.rowCount === 0) {
         res.status(500).json({ error: "This layer does not exist" });
       } else {
-        res.status(200).json({ getLayerById });
+        res.status(200).json({ layerById });
       }
     }
   }

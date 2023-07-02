@@ -5,11 +5,11 @@ export async function getLayers() {
   return layers
 }
 
-export async function getLayersById(layerId) {
-  const getLayerById = await query("SELECT * FROM layers WHERE id = $1", [
+export async function getLayerById(layerId) {
+  const layerById = await query("SELECT * FROM layers WHERE id = $1", [
     layerId,
   ]);
-  return getLayerById;
+  return layerById;
 }
 
 export async function insertLayer(layerName, description, category, available) {
