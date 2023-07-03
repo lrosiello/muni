@@ -28,7 +28,7 @@ export default function AppShellDemo(props) {
       navbarOffsetBreakpoint="sm"
       asideOffsetBreakpoint="sm"
       navbar={
-        <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 120, lg: 200 }}>
+        <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 140, lg: 200 }}>
           <Navigation/>
         </Navbar>
       }

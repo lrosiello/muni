@@ -27,7 +27,7 @@ export function tableSelect(tableName) {
   return columnHeaders;
 }
 
-export function getRows(elements, columnHeaders, tableName) {
+export function getRows(elements, tableName) {
   const router = useRouter();
 
   const handleDelete = (id) => {
@@ -42,10 +42,10 @@ export function getRows(elements, columnHeaders, tableName) {
 
   return elements.map((element) => {
     return (
-      <tr key={element.id}>
+      <tr key={element.id} >
         {Object.entries(element).map(([fieldName, fieldValue], index) =>
           fieldName !== "available" ? (
-            <td key={index}>{fieldValue}</td>
+            <td key={index}>{fieldValue} </td>
           ) : (
             <td key={index}>{fieldValue ? "Yes" : "No"}</td>
           )
