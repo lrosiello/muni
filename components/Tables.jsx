@@ -1,48 +1,47 @@
 import React, { useState } from "react";
-import { Box, Table } from "@mantine/core";
+import { Box, Table, Title } from "@mantine/core";
 import { Pagination } from "@mantine/core";
 import { tableSelect, getRows } from "../services/tablesLibs";
+import ButtonAdd from "./ButtonAdd";
 
 function Tables(props) {
-  const [limit, setLimit] = useState(10);
-  const [page, setPage] = useState(1);
-
   const { table, tableName } = props;
-
   const columnHeaders = tableSelect(tableName);
   const rows = getRows(table, tableName);
 
-  const handleChangeLimit = (dataKey) => {
-    setPage(1);
-    setLimit(dataKey);
-  };
-
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const totalPages = Math.ceil(rows.length / limit);
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
   const paginatedRows = rows.slice(startIndex, endIndex);
 
   return (
     <>
-    <Box>
-      <Table style={{zIndex:1}}>
-        <thead>
-          <tr>
-            {columnHeaders.map((thead) => (
-              <th key={thead}>{thead}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>{paginatedRows}</tbody>
-      </Table>
-      
-    </Box>
-    <Pagination
-        total={rows.length}
+    <Box style={{display:"flex", justifyContent:"center", textTransform:"capitalize"}}><Title>{tableName}</Title></Box>
+    
+    <Box style={{display:"flex", flexDirection:"row", width:"95%", justifyContent:"space-between"}}>
+      <Pagination
+        total={totalPages}
         limit={limit}
         page={page}
         onChange={setPage}
-        limitOptions={[10, 30, 50]}
-      /></>
+      />
+      <ButtonAdd tableName={tableName} columns={columnHeaders}/>
+      </Box>
+      <Box>
+        <Table style={{ zIndex: 1, overflow: "scroll" }}>
+          <thead>
+            <tr>
+              {columnHeaders.map((thead) => (
+                <th key={thead}>{thead}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>{paginatedRows}</tbody>
+        </Table>
+      </Box>
+    </>
   );
 }
 

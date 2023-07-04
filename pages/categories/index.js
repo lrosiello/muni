@@ -7,13 +7,14 @@ import { getCategories} from "../../services/apiCalls";
 export default function Categories() {
 
   const [categories, setCategories] = useState([]);
-  console.log(categories)
+
   useEffect(() => {
     fetchCategories();
   }, []);
 
   const fetchCategories = async () => {
     const categories = await getCategories();
+    categories.sort((a, b) => a.order_number - b.order_number);
     setCategories(categories);
   };
 

@@ -120,13 +120,11 @@ export async function creating(url, format) {
       },
       body: JSON.stringify(format),
     });
-
-    console.log("creando nuevo dato");
-    console.log(format);
     if (response.ok) {
       console.log("Item created successfully");
     } else {
-      console.log("Error creating item");
+      const errorMessage = await response.text();
+      throw new Error(`Error creating item: ${errorMessage}`);
     }
 
     return response; // Devuelve la respuesta completa
