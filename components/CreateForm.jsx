@@ -9,12 +9,13 @@ import {
 } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { getCategories } from "../services/apiCalls";
+import { getCategories} from "../services/apiCalls";
 
 export default function CreateForm({ tableName, columns, onClose }) {
   const router = useRouter();
 
   const [categories, setCategories] = useState([]);
+
 
   //it brings categories if the table to create is layer
   useEffect(() => {
@@ -27,7 +28,6 @@ export default function CreateForm({ tableName, columns, onClose }) {
     setCategories(categories);
   };
 
-  console.log(categories);
   const handleCancel = () => {
     onClose();
   };
@@ -52,7 +52,7 @@ export default function CreateForm({ tableName, columns, onClose }) {
       };
     } else if (tableName === "layers") {
       jsonData = {
-        layerName: formData.layerName || "",
+        layerName: formData.layer_name || "",
         description: formData.description || "",
         category: formData.category || "",
         available: formData.available || false,

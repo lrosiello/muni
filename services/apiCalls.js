@@ -111,25 +111,38 @@ export async function updating(url, id, format) {
   }
 }
 
-export async function creating(url, format) {
+
+export async function creating(url, bodyToSubmit, tableName) {
   try {
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(format),
+      body: JSON.stringify(bodyToSubmit),
     });
+
     if (response.ok) {
-      console.log("Item created successfully");
+      if(tableName==="categories"){
+        const responseData = await response.json();
+        const category = responseData.response.category; 
+        console.log("Item created successfully", category);
+        return { category: category, error: null };
+      }else if(tableName==="layers"){
+          const responseData = await response.json();
+          const layer = responseData.response.layer; 
+          console.log("Item created successfully", layer);
+          return { layer: layer, error: null };
+      }
     } else {
-      const errorMessage = await response.text();
-      throw new Error(`Error creating item: ${errorMessage}`);
+      const errorMessage = await response.json();
+      return { error: errorMessage };
     }
 
-    return response; // Devuelve la respuesta completa
+   
   } catch (error) {
     console.error("Error creating item", error);
-    throw error; // Lanza el error para que pueda ser capturado en el componente
+    return { error: error.message };
   }
 }
+

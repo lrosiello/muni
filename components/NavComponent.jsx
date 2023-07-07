@@ -6,14 +6,14 @@ import {
 export default function Navigation() {
   return (
     <Box w={180}>
-      <NavLink component="a" href="/"
+      <NavLink style={{width:"75%" }} component="a" href="/"
         label="Home"
         icon={<IconHome2 size="1rem" stroke={1.5} />}
       />
-      <NavLink component="a" href="/categories"
+      <NavLink style={{width:"75%"}} component="a" href="/categories"
         label="Categories"
       />
-      <NavLink component="a" href="/layers"
+      <NavLink style={{width:"75%"}} component="a" href="/layers"
         label="Layers"
       />
     </Box>
