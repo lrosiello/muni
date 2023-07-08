@@ -4,6 +4,7 @@ import { getCategory } from "../../../services/apiCalls";
 import AppShellDemo from "../../../components/AppShell";
 import { useRouter } from "next/router";
 import DeleteConfirm from "../../../components/DeleteConfirm";
+import UpdateForm from "../../../components/UpdateForm";
 
 export default function Category() {
   const router = useRouter();
@@ -36,11 +37,18 @@ export default function Category() {
     }
 
     if (categoryData) {
-      return (
-        <>
-          <DeleteConfirm data={categoryData} id={id} action={action} tableName={tableName}/>
-        </>
-      );
+      if (action === "delete") {
+        return (
+          <DeleteConfirm
+            data={categoryData}
+            id={id}
+            action={action}
+            tableName={tableName}
+          />
+        );
+      } else if (action === "put") {
+        return <UpdateForm data={categoryData} id={id} tableName={tableName}/>;
+      }
     }
 
     return <p>Category not found.</p>;

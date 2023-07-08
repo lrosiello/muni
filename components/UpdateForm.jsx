@@ -9,31 +9,28 @@ import {
 } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { getCategories} from "../services/apiCalls";
+import { getCategories } from "../services/apiCalls";
 
-export default function CreateForm({ tableName, columns, onClose }) {
+export default function UpdateForm({ tableName, data, id }) {
   const router = useRouter();
-  const [formData, setFormData] = useState({});
+
   const [categories, setCategories] = useState([]);
+  const [formData, setFormData] = useState({});
 
-
-  //it brings categories if the table to create is layer
   useEffect(() => {
     fetchCategories();
-  }, []);
+    setFormData(data);
+  }, [data]);
 
   const fetchCategories = async () => {
     const categories = await getCategories();
-    categories.sort((a, b) => a.category_name.localeCompare(b.category_name)); //order alphabetically
+    categories.sort((a, b) => a.category_name.localeCompare(b.category_name));
     setCategories(categories);
   };
 
   const handleCancel = () => {
-    onClose();
+    router.back();
   };
-  ///////////////////////////////////////////////////////////
-
- 
 
   const handleInputChange = (value, column) => {
     setFormData((prevData) => ({
@@ -41,6 +38,7 @@ export default function CreateForm({ tableName, columns, onClose }) {
       [column]: value,
     }));
   };
+
   const handleSubmit = () => {
     let jsonData = {};
     if (tableName === "categories") {
@@ -57,12 +55,11 @@ export default function CreateForm({ tableName, columns, onClose }) {
         available: formData.available || false,
       };
     }
-    const hrefCreate = `/${tableName}/create/?action=post&jsonData=${encodeURIComponent(JSON.stringify(jsonData))}`;
-    router.push(hrefCreate);
-
+    const hrefUpdate = `/${tableName}/${id}/update/?action=put&jsonData=${encodeURIComponent(
+      JSON.stringify(jsonData)
+    )}`;
+    router.push(hrefUpdate);
   };
-
-
 
   return (
     <>
@@ -79,12 +76,12 @@ export default function CreateForm({ tableName, columns, onClose }) {
           position: "absolute",
         }}
       >
-        <Text>Creating element for {tableName}</Text>
+        <Text>Updating element for {tableName}</Text>
         <Divider style={{ margin: "10px" }} />
 
-        {columns.map((column) => {
+        {Object.entries(data).map(([column, value]) => {
           if (column === "id" || column === "order_number") {
-            return null; // Ignorar campos "id" y "order_number"
+            return null;
           }
 
           if (column === "available") {
@@ -92,10 +89,12 @@ export default function CreateForm({ tableName, columns, onClose }) {
               <Box key={column} style={{ marginBottom: "10px" }}>
                 <Text>{column}</Text>
                 <Select
-                  data={["true", "false"]}
-                  placeholder="Select value"
-                  onChange={(value) => handleInputChange(value, column)}
-                />
+  data={["true", "false"]}
+  placeholder="Select value"
+  value={formData[column] ? formData[column].toString() : "false"}
+  onChange={(value) => handleInputChange(value, column)}
+/>
+
               </Box>
             );
           }
@@ -107,6 +106,7 @@ export default function CreateForm({ tableName, columns, onClose }) {
                 <Select
                   data={categories.map((category) => category.category_name)}
                   placeholder="Select category"
+                  value={formData[column] || ""}
                   onChange={(value) => handleInputChange(value, column)}
                 />
               </Box>
@@ -118,6 +118,7 @@ export default function CreateForm({ tableName, columns, onClose }) {
               <Text>{column}</Text>
               <Input
                 placeholder={`Enter ${column}`}
+                value={formData[column] || ""}
                 onChange={(e) => handleInputChange(e.target.value, column)}
               />
             </Box>
@@ -140,6 +141,6 @@ export default function CreateForm({ tableName, columns, onClose }) {
           </Button>
         </Box>
       </Paper>
-    </>
+    </> 
   );
 }

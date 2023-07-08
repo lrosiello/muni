@@ -3,7 +3,7 @@ export async function getCategories() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/categories`);
   const response = await res.json();
   const sortedCategories = response.categories.rows.sort(
-    (a, b) => a.numero_orden - b.numero_orden
+    (a, b) => a.order_number - b.order_number
   );
   return sortedCategories;
 }
@@ -27,9 +27,7 @@ export async function getCategory(id) {
 
 export async function getLayer(id) {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_URL}/api/layers/${id}`
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/layers/${id}`);
     // Verifies if it worked
     if (res.status === 200) {
       const response = await res.json();
@@ -47,7 +45,7 @@ export async function getLayers() {
   const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/layers`);
   const response = await res.json();
   const sortedLayers = response.layers.rows.sort(
-    (a, b) => a.numero_orden - b.numero_orden
+    (a, b) => a.order_number - b.order_number
   );
   return sortedLayers;
 }
@@ -88,30 +86,42 @@ export async function deleteLayer(id) {
   }
 }
 
-export async function updating(url, id, format) {
+//UPDATING
+export async function updating(url, bodyToSubmit, tableName) {
   try {
     const response = await fetch(url, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(format),
+      body: JSON.stringify(bodyToSubmit),
     });
 
     if (response.ok) {
-      console.log("Updating was successful", id);
+      if (tableName === "categories") {
+        const responseData = await response.json();
+        const category = responseData.response.category;
+        console.log("Item updated successfully", category);
+        return { category: category, error: null };
+      } else if (tableName === "layers") {
+        const responseData = await response.json();
+        const layer = responseData.response.layer;
+        console.log("Item updated successfully", layer);
+        return { layer: layer, error: null };
+      }
     } else {
-      console.log("Error Updating: ", id);
+      const errorMessage = await response.json();
+      return { error: errorMessage };
     }
 
-    return response; // Devuelve la respuesta completa
+    return response;
   } catch (error) {
     console.error("Error Updating: ", error);
-    throw error; // Lanza el error para que pueda ser capturado en el componente
+    throw error;
   }
 }
 
-
+//CREATING
 export async function creating(url, bodyToSubmit, tableName) {
   try {
     const response = await fetch(url, {
@@ -123,26 +133,23 @@ export async function creating(url, bodyToSubmit, tableName) {
     });
 
     if (response.ok) {
-      if(tableName==="categories"){
+      if (tableName === "categories") {
         const responseData = await response.json();
-        const category = responseData.response.category; 
+        const category = responseData.response.category;
         console.log("Item created successfully", category);
         return { category: category, error: null };
-      }else if(tableName==="layers"){
-          const responseData = await response.json();
-          const layer = responseData.response.layer; 
-          console.log("Item created successfully", layer);
-          return { layer: layer, error: null };
+      } else if (tableName === "layers") {
+        const responseData = await response.json();
+        const layer = responseData.response.layer;
+        console.log("Item created successfully", layer);
+        return { layer: layer, error: null };
       }
     } else {
       const errorMessage = await response.json();
       return { error: errorMessage };
     }
-
-   
   } catch (error) {
     console.error("Error creating item", error);
     return { error: error.message };
   }
 }
-

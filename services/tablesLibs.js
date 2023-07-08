@@ -36,7 +36,7 @@ export function getRows(elements, tableName) {
   };
 
   const handleUpdate = (id) => {
-    const hrefUpdate = `/${tableName}/${id}?action=put`;
+    const hrefUpdate = `/${tableName}/${id}/?action=put`;
     router.push(hrefUpdate);
   };
 

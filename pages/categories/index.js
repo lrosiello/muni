@@ -14,7 +14,6 @@ export default function Categories() {
 
   const fetchCategories = async () => {
     const categories = await getCategories();
-    categories.sort((a, b) => a.order_number - b.order_number);
     setCategories(categories);
   };
 

@@ -13,7 +13,6 @@ export default function Layers() {
 
   const fetchLayers = async () => {
     const layers = await getLayers();
-    layers.sort((a, b) => a.order_number - b.order_number);
     setLayers(layers);
   };
 

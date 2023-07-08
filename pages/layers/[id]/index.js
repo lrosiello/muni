@@ -4,6 +4,7 @@ import { getLayer } from "../../../services/apiCalls";
 import AppShellDemo from "../../../components/AppShell";
 import { useRouter } from "next/router";
 import DeleteConfirm from "../../../components/DeleteConfirm";
+import UpdateForm from "../../../components/UpdateForm";
 
 export default function Layer() {
   const router = useRouter();
@@ -36,11 +37,18 @@ export default function Layer() {
     }
 
     if (layerData) {
-      return (
-        <>
-          <DeleteConfirm data={layerData} id={id} action={action} tableName={tableName}/>
-        </>
-      );
+      if (action === "delete") {
+        return (
+          <DeleteConfirm
+            data={layerData}
+            id={id}
+            action={action}
+            tableName={tableName}
+          />
+        );
+      } else if (action === "put") {
+        return <UpdateForm tableName={tableName} data={layerData} id={id} action={action}  />;
+      }
     }
 
     return <p>Layer not found.</p>;
