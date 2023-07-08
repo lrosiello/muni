@@ -9,13 +9,12 @@ import {
 } from "@mantine/core";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { getCategories} from "../services/apiCalls";
+import { getCategories } from "../services/apiCalls";
 
 export default function CreateForm({ tableName, columns, onClose }) {
   const router = useRouter();
   const [formData, setFormData] = useState({});
   const [categories, setCategories] = useState([]);
-
 
   //it brings categories if the table to create is layer
   useEffect(() => {
@@ -32,8 +31,6 @@ export default function CreateForm({ tableName, columns, onClose }) {
     onClose();
   };
   ///////////////////////////////////////////////////////////
-
- 
 
   const handleInputChange = (value, column) => {
     setFormData((prevData) => ({
@@ -57,12 +54,11 @@ export default function CreateForm({ tableName, columns, onClose }) {
         available: formData.available || false,
       };
     }
-    const hrefCreate = `/${tableName}/create/?action=post&jsonData=${encodeURIComponent(JSON.stringify(jsonData))}`;
+    const hrefCreate = `/${tableName}/create/?action=post&jsonData=${encodeURIComponent(
+      JSON.stringify(jsonData)
+    )}`;
     router.push(hrefCreate);
-
   };
-
-
 
   return (
     <>
@@ -115,12 +111,25 @@ export default function CreateForm({ tableName, columns, onClose }) {
 
           return (
             <Box key={column} style={{ marginBottom: "10px" }}>
-              <Text>{column}</Text>
+            <Text>{column}</Text>
+            {formData[column] || column === "description" ? (
               <Input
                 placeholder={`Enter ${column}`}
                 onChange={(e) => handleInputChange(e.target.value, column)}
               />
-            </Box>
+            ) : (
+              <Input.Wrapper
+                id="input-demo"
+                withAsterisk
+                error="this label is required"
+              >
+                <Input
+                  placeholder={`Enter ${column}`}
+                  onChange={(e) => handleInputChange(e.target.value, column)}
+                />
+              </Input.Wrapper>
+            )}
+          </Box>
           );
         })}
 
@@ -135,7 +144,11 @@ export default function CreateForm({ tableName, columns, onClose }) {
           <Button onClick={handleCancel} variant="default">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} variant="gradient" gradient={{ from: "blue", to: "green" }}>
+          <Button
+            onClick={handleSubmit}
+            variant="gradient"
+            gradient={{ from: "blue", to: "green" }}
+          >
             Submit
           </Button>
         </Box>
