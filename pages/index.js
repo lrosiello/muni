@@ -1,18 +1,62 @@
 import Head from "next/head";
-import {  Container } from "@mantine/core";
+import { useState, useEffect } from "react";
+import { Button, Container, Paper, Title } from "@mantine/core";
 import AppShellDemo from "../components/AppShell";
-
+import { LoginForm } from "../components/LoginForm";
+import SkeletonMain from "../components/SkeletonMain";
 
 export default function Home() {
+  const [isLogged, setLogged] = useState(false);
+  const [isLoaded, setLoaded] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loginState = localStorage.getItem("isLogged");
+    if (loginState) {
+      setLogged(JSON.parse(loginState));
+    }
+    setLoaded(true);
+  }, []);
+
+  const handleLogin = () => {
+    setLogged(true);
+    localStorage.setItem("isLogged", JSON.stringify(true));
+  };
+
+  const handleLogout = () => {
+    setLogged(false);
+    localStorage.setItem("isLogged", JSON.stringify(false));
+    setLoading(true); 
+  };
 
   const page = () => {
-    return (
-      <Container>
-        <p>Hola mundo</p>
-      </Container>
-    )
-  }
+    if (loading) {
+      return (
+        <>
+          <SkeletonMain loading={loading} setLoading={setLoading} />
+        </>
+      );
+    }
 
+    return (
+      <>
+         <Container
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Paper shadow="xs" style={{ padding: 20 }}>
+              <Title style={{ marginBottom: 10 }}>
+                Hello! thanks for working with us{" "}
+              </Title>
+              <Button onClick={handleLogout}>Log out</Button>
+            </Paper>
+          </Container>
+      </>
+    );
+  };
 
   return (
     <>
@@ -22,7 +66,12 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <AppShellDemo page={page}/>
+      {isLoaded &&
+        (isLogged ? (
+          <AppShellDemo page={page} />
+        ) : (
+          <LoginForm onLogin={handleLogin} />
+        ))}
     </>
   );
 }
