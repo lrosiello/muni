@@ -7,14 +7,39 @@ import {
   isValidRange
 } from "../utils/validations";
 import { typesValidating } from "../utils/typesValidating";
-import { getUserById, deleteUser, updateUser } from "../apiModel/usersModel";
+import { getUserById, deleteUser, updateUser, getUserByEmail } from "../apiModel/usersModel";
+import { comparePassword } from '../utils/authUtils';
 
 export default async function handler(req, res) {
   let message;
   const bcrypt = require("bcrypt");
 
-  //GET USER BY ID
+if (req.method === 'POST' && req.url === '/api/login') {
+    const { email, password } = req.body;
 
+    // Obtener el usuario por email desde la base de datos (reemplaza esta parte con tu función para obtener el usuario por email)
+    const user = await getUserByEmail(email);
+
+    if (!user) {
+      // El usuario no existe
+      return res.status(401).json({ success: false, message: 'User not found' });
+    }
+
+    // Verificar si la contraseña es correcta
+    const passwordMatch = await comparePassword(password, user.password);
+
+    if (!passwordMatch) {
+      // La contraseña es incorrecta
+      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    }
+
+    // Si el usuario y la contraseña son correctos, envía una respuesta exitosa
+    return res.status(200).json({ success: true, message: 'Login successful' });
+  }
+
+
+
+  //GET USER BY ID
   if (req.method === "POST") {
     const userId = req.query.id;
     if (isNaN(userId)) {
