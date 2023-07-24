@@ -15,10 +15,10 @@ export async function getUserByEmail(email) {
   return userByEmail;
 }
 
-export async function insertUser(name, surname, email, password) {
+export async function insertUser(name, surname, email, password, user_role) {
   const newUser = await query(
-    "INSERT INTO users (name, surname, email, password) VALUES($1, $2, $3, $4) RETURNING *",
-    [name, surname, email, password]
+    "INSERT INTO users (name, surname, email, password, user_role) VALUES ($1, $2, $3, $4, CAST($5 AS user_role)) RETURNING *",
+    [name, surname, email, password, user_role]
   );
   return newUser;
 }
@@ -28,10 +28,10 @@ export async function deleteUser(userId) {
   return deletedUser;
 }
 
-export async function updateUser(userId, name, surname, email, password) {
+export async function updateUser(userId, name, surname, email, password, user_role) {
   const updatedUser = await query(
-    "UPDATE users SET name = $1, surname = $2, email = $3, password = $4 WHERE id = $5",
-    [name, surname, email, password, userId]
+    "UPDATE users SET name = $1, surname = $2, email = $3, password = $4, user_role = CAST($5 AS user_role) WHERE id = $6",
+    [name, surname, email, password, user_role, userId]
   );
   return updatedUser;
 }

@@ -47,3 +47,27 @@ export async function isItExists(tableName, columnName, elementFromBody, idToChe
   return verify.rowCount > 0;
 }
 
+// VALIDATES EMAIL FORMAT
+export function isValidEmail(email) {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(email);
+}
+
+// VALIDATES PASSWORD FORMAT (at least 6 alphanumeric characters)
+export function isValidPassword(password) {
+  return password.length >= 6 && /[a-zA-Z]/.test(password) && /\d/.test(password);
+}
+
+// VALIDATE RANGE FORMAT
+export function isValidRange(user_role) {
+  if(user_role){
+    if(user_role === 0 || user_role === 1){
+      return true;
+    }else{
+      return false;
+    }
+  }
+  else{
+    return true;
+  }
+}

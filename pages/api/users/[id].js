@@ -1,9 +1,17 @@
-import { areAllDataFilled, isItExists, fixSpaces } from "../utils/validations";
+import {
+  isValidEmail,
+  isValidPassword,
+  areAllDataFilled,
+  isItExists,
+  fixSpaces,
+  isValidRange
+} from "../utils/validations";
 import { typesValidating } from "../utils/typesValidating";
 import { getUserById, deleteUser, updateUser } from "../apiModel/usersModel";
 
 export default async function handler(req, res) {
   let message;
+  const bcrypt = require("bcrypt");
 
   //GET USER BY ID
 
@@ -36,9 +44,7 @@ export default async function handler(req, res) {
       } else {
         message = "Could not delete, this id does not exist";
       }
-      res
-        .status(200)
-        .json({ response: { message: message, userId: userId } });
+      res.status(200).json({ response: { message: message, userId: userId } });
     }
   }
 
@@ -51,7 +57,7 @@ export default async function handler(req, res) {
     if (isNaN(userId)) {
       res.status(500).json({ error: "The id value is not valid" });
     } else {
-      const { name, surname, email, password } = req.body;
+      const { name, surname, email, password, user_role } = req.body;
 
       //VERIFIES IF DATA IS FILLED
       if (areAllDataFilled([name, surname, email, password])) {
@@ -69,18 +75,40 @@ export default async function handler(req, res) {
           fixedEmail,
           fixedPassword,
         ]);
+        // VALIDATE EMAIL FORMAT
+        if (!isValidEmail(fixedEmail)) {
+          return res.status(500).json({ error: "Invalid email format" });
+        }
+        // VALIDATE PASSWORD FORMAT
+        if (!isValidPassword(fixedPassword)) {
+          return res.status(500).json({ error: "Invalid password format" });
+        }
+        // VALIDATE RANGE FORMAT
+        if (!isValidRange(user_role)) {
+          return res.status(500).json({ error: "Invalid range format" });
+        }
         if (typesValidation.valid) {
           //VERIFIES IF EMAIL ALREADY EXISTS
-          const repeated = await isItExists("users", "email", fixedEmail, userId);
+          const repeated = await isItExists(
+            "users",
+            "email",
+            fixedEmail,
+            userId
+          );
 
           if (!repeated) {
             //UPDATE USER
+            // crypt password
+            const saltRounds = 10;
+            const hashedPassword = await bcrypt.hash(fixedPassword, saltRounds);
+
             const updatedUser = await updateUser(
               userId,
               fixedName,
               fixedSurname,
               fixedEmail,
-              fixedPassword
+              hashedPassword,
+              user_role
             );
 
             const rowCount = updatedUser.rowCount;
@@ -95,7 +123,8 @@ export default async function handler(req, res) {
               name: fixedName,
               surname: fixedSurname,
               email: fixedEmail,
-           
+              password: fixedPassword,
+              user_role: user_role
             };
             res
               .status(200)

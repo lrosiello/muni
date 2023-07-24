@@ -1,10 +1,18 @@
-import { areAllDataFilled, isItExists, fixSpaces } from "./utils/validations";
+import {
+  isValidEmail,
+  isValidPassword,
+  areAllDataFilled,
+  isItExists,
+  fixSpaces,
+  isValidRange,
+} from "./utils/validations";
 import { typesValidating } from "./utils/typesValidating";
 import { getUsers, insertUser } from "./apiModel/usersModel";
 
 export default async function handler(req, res) {
   let message;
   let user;
+  const bcrypt = require("bcrypt");
 
   //GET ALL USERS
   if (req.method === "GET") {
@@ -14,7 +22,7 @@ export default async function handler(req, res) {
 
   //CREATE A NEW USER
   else if (req.method === "POST") {
-    const { name, surname, email, password } = req.body;
+    const { name, surname, email, password, user_role } = req.body;
 
     //VERIFIES THAT ALL INPUTS ARE FILLED
     if (areAllDataFilled([name, surname, email, password])) {
@@ -24,6 +32,7 @@ export default async function handler(req, res) {
       const fixedSurname = fixedElements[1];
       const fixedEmail = fixedElements[2];
       const fixedPassword = fixedElements[3];
+
       //VERIFIES IF DATA IS VALID
       const typesValidation = typesValidating("users", [
         fixedName,
@@ -31,17 +40,35 @@ export default async function handler(req, res) {
         fixedEmail,
         fixedPassword,
       ]);
+      // VALIDATE EMAIL FORMAT
+      if (!isValidEmail(fixedEmail)) {
+        return res.status(500).json({ error: "Invalid email format" });
+      }
+      // VALIDATE PASSWORD FORMAT
+      if (!isValidPassword(fixedPassword)) {
+        return res.status(500).json({ error: "Invalid password format" });
+      }
+      // VALIDATE RANGE FORMAT
+      if (!isValidRange(user_role)) {
+        return res.status(500).json({ error: "Invalid range format" });
+      }
+
       if (typesValidation.valid) {
         //VERIFIES THAT THE USER DOES NOT EXISTS
         const verifyEmail = await isItExists("users", "email", fixedEmail);
 
         if (!verifyEmail) {
           //INSERT A NEW USER
+          // crypt password
+          const saltRounds = 10;
+          const hashedPassword = await bcrypt.hash(fixedPassword, saltRounds);
+
           const addUser = await insertUser(
             fixedName,
             fixedSurname,
             fixedEmail,
-            fixedPassword
+            hashedPassword,
+            user_role
           );
           //IT TAKES DATA FROM THE USER ADDED
           if (addUser.rowCount > 0) {
@@ -54,6 +81,7 @@ export default async function handler(req, res) {
                 surname: fixedSurname,
                 email: fixedEmail,
                 password: fixedPassword,
+                user_role: user_role
               };
             } else {
               message = "error";
@@ -65,11 +93,9 @@ export default async function handler(req, res) {
               .json({ response: { message: message, user: user } });
           }
         } else {
-          res
-            .status(500)
-            .json({
-              error: "That email already exists, could not create the user",
-            });
+          res.status(500).json({
+            error: "That email already exists, could not create the user",
+          });
         }
       } else {
         const typeError = typesValidation.message;
