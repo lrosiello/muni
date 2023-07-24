@@ -6,7 +6,7 @@ const SkeletonStructure = ({loading, setLoading})=>{
     useEffect(() => {
         const delay = setTimeout(() => {
           setLoading(false);
-        }, 1000);
+        }, 2000);
         return () => clearTimeout(delay);
       }, []);
 
