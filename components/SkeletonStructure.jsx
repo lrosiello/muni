@@ -4,11 +4,9 @@ import { useEffect } from "react";
 const SkeletonStructure = ({loading, setLoading})=>{
 
     useEffect(() => {
-        // Simulate a loading delay
         const delay = setTimeout(() => {
           setLoading(false);
         }, 1000);
-    
         return () => clearTimeout(delay);
       }, []);
 
