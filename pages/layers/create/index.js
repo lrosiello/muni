@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { creating } from "../../../services/apiCalls";
 import { Modal, Button, Group, Box, Text } from "@mantine/core";
 
 export default function CreateLayer() {
-  var ranonce = false;
+  const isFirstRender = useRef(true);
   const router = useRouter();
   const { jsonData } = router.query;
-  const parsedJsonData = JSON.parse(decodeURIComponent(jsonData));
+  const parsedJsonData = jsonData ? JSON.parse(decodeURIComponent(jsonData)) : null;
 
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
@@ -15,34 +15,34 @@ export default function CreateLayer() {
   const [showLayer, setShowLayer] = useState([]);
 
   useEffect(() => {
-    if (!ranonce) {
-      creatingLayer();
-      ranonce = true;
-    }
-  }, []);
-
-  const creatingLayer = async () => {
-    try {
-      const response = await creating(
-        `${process.env.NEXT_PUBLIC_URL}/api/layers`,
-        parsedJsonData, "layers"
-      );
-
-      if (response.error) {
-        setErrorMessage(response.error);
-      } else {
-        setSuccessMessage("Element Created Successfully");
-        const newLayer = [response.layer];
-        setShowLayer(newLayer);
+    const creatingLayer = async () => {
+      try {
+        const response = await creating(
+          `${process.env.NEXT_PUBLIC_URL}/api/layers`,
+          parsedJsonData, "layers"
+        );
+  
+        if (response.error) {
+          setErrorMessage(response.error);
+        } else {
+          setSuccessMessage("Element Created Successfully");
+          const newLayer = [response.layer];
+          setShowLayer(newLayer);
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error creating layer: ", error);
+        setErrorMessage("Error creating layer: " + error.message);
+        setLoading(false);
       }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Error creating layer: ", error);
-      setErrorMessage("Error creating layer: " + error.message);
-      setLoading(false);
+    };
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      creatingLayer();
     }
-  };
+  }, [parsedJsonData]);
+
+  
 
   const handleClose = () => {
     router.push("/layers");
@@ -60,7 +60,7 @@ export default function CreateLayer() {
         onClose={handleClose}
         size="md"
         padding="lg"
-        hideCloseButton
+        hideclosebutton="true"
       >
        {loading ? (
           <div>Loading...</div>

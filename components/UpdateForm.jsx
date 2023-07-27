@@ -89,12 +89,13 @@ export default function UpdateForm({ tableName, data, id }) {
               <Box key={column} style={{ marginBottom: "10px" }}>
                 <Text>{column}</Text>
                 <Select
-  data={["true", "false"]}
-  placeholder="Select value"
-  value={formData[column] ? formData[column].toString() : "false"}
-  onChange={(value) => handleInputChange(value, column)}
-/>
-
+                  data={["true", "false"]}
+                  placeholder="Select value"
+                  value={
+                    formData[column] ? formData[column].toString() : "false"
+                  }
+                  onChange={(value) => handleInputChange(value, column)}
+                />
               </Box>
             );
           }
@@ -136,11 +137,15 @@ export default function UpdateForm({ tableName, data, id }) {
           <Button onClick={handleCancel} variant="default">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} variant="gradient" gradient={{ from: "blue", to: "green" }}>
+          <Button
+            onClick={handleSubmit}
+            variant="gradient"
+            gradient={{ from: "blue", to: "green" }}
+          >
             Submit
           </Button>
         </Box>
       </Paper>
-    </> 
+    </>
   );
 }

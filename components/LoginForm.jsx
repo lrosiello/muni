@@ -32,11 +32,11 @@ export function LoginForm({ onLogin }) {
         onLogin();
       } else {
         // Show the error message directly from the API response
-        setErrorMessage(data.message || "Error de inicio de sesión");
+        setErrorMessage(data.message || "Could not sign in");
       }
     } catch (error) {
       console.error(error);
-      setErrorMessage("Error");
+      setErrorMessage("Be sure you are putting the correct data");
     }
   };
 

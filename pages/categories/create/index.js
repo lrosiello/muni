@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { creating } from "../../../services/apiCalls";
 import { Modal, Button, Group, Box, Text } from "@mantine/core";
 
 export default function CreateCategory() {
-  var ranonce = false;
+  const isFirstRender = useRef(true);
   const router = useRouter();
   const { jsonData } = router.query;
-  const parsedJsonData = JSON.parse(decodeURIComponent(jsonData));
+  const parsedJsonData = jsonData ? JSON.parse(decodeURIComponent(jsonData)) : null;
 
   const [loading, setLoading] = useState(true);
   const [successMessage, setSuccessMessage] = useState("");
@@ -15,34 +15,35 @@ export default function CreateCategory() {
   const [showCategory, setShowCategory] = useState([]);
 
   useEffect(() => {
-    if (!ranonce) {
-      creatingCategory();
-      ranonce = true;
-    }
-  }, []);
-
-  const creatingCategory = async () => {
-    try {
-      const response = await creating(
-        `${process.env.NEXT_PUBLIC_URL}/api/categories`,
-        parsedJsonData, "categories"
-      );
-
-      if (response.error) {
-        setErrorMessage(response.error);
-      } else {
-        setSuccessMessage("Element Created Successfully");
-        const newCategory = [response.category];
-        setShowCategory(newCategory);
+    const creatingCategory = async () => {
+      try {
+        const response = await creating(
+          `${process.env.NEXT_PUBLIC_URL}/api/categories`,
+          parsedJsonData, "categories"
+        );
+  
+        if (response.error) {
+          setErrorMessage(response.error);
+        } else {
+          setSuccessMessage("Element Created Successfully");
+          const newCategory = [response.category];
+          setShowCategory(newCategory);
+        }
+  
+        setLoading(false);
+      } catch (error) {
+        console.error("Error creating category: ", error);
+        setErrorMessage("Error creating category: " + error.message);
+        setLoading(false);
       }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Error creating category: ", error);
-      setErrorMessage("Error creating category: " + error.message);
-      setLoading(false);
+    };
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      creatingCategory();
     }
-  };
+  }, [parsedJsonData]);
+
+  
 
   const handleClose = () => {
     router.push("/categories");
@@ -60,7 +61,7 @@ export default function CreateCategory() {
         onClose={handleClose}
         size="md"
         padding="lg"
-        hideCloseButton
+        hideclosebutton="true"
       >
        {loading ? (
           <div>Loading...</div>

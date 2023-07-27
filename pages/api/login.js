@@ -1,5 +1,5 @@
-import { comparePassword } from './utils/authUtils'; // Asegúrate de que la ruta a authUtils sea correcta
-import { getUserByEmail } from './apiModel/usersModel'; // Asegúrate de que la ruta a usersModel sea correcta
+import { comparePassword } from './utils/authUtils'; 
+import { getUserByEmail } from './apiModel/usersModel'; 
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {

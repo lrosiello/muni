@@ -8,7 +8,7 @@ const SkeletonMain = ({ loading, setLoading }) => {
       setLoading(false);
     }, 1000);
     return () => clearTimeout(delay);
-  }, []);
+  }, [setLoading]);
 
   return (
     <>

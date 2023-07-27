@@ -14,30 +14,6 @@ export default async function handler(req, res) {
   let message;
   const bcrypt = require("bcrypt");
 
-if (req.method === 'POST' && req.url === '/api/login') {
-    const { email, password } = req.body;
-
-    // Obtener el usuario por email desde la base de datos (reemplaza esta parte con tu función para obtener el usuario por email)
-    const user = await getUserByEmail(email);
-
-    if (!user) {
-      // El usuario no existe
-      return res.status(401).json({ success: false, message: 'User not found' });
-    }
-
-    // Verificar si la contraseña es correcta
-    const passwordMatch = await comparePassword(password, user.password);
-
-    if (!passwordMatch) {
-      // La contraseña es incorrecta
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
-    }
-
-    // Si el usuario y la contraseña son correctos, envía una respuesta exitosa
-    return res.status(200).json({ success: true, message: 'Login successful' });
-  }
-
-
 
   //GET USER BY ID
   if (req.method === "POST") {
@@ -172,4 +148,33 @@ if (req.method === 'POST' && req.url === '/api/login') {
       }
     }
   }
+
+
+
+
+  
+    //LOGIN SECTION//////
+if (req.method === 'POST' && req.url === '/api/login') {
+  const { email, password } = req.body;
+
+  //FIND USER BY EMAIL
+  const user = await getUserByEmail(email);
+
+  if (!user) {
+    // IF USER DOES NOT EXIST
+    return res.status(401).json({ success: false, message: 'User not found' });
+  }
+
+  // VERIFY PASSWORD
+  const passwordMatch = await comparePassword(password, user.password);
+
+  if (!passwordMatch) {
+    // PASS IS WRONG
+    return res.status(401).json({ success: false, message: 'Invalid credentials' });
+  }
+
+  // IF LOGIN IS SUCCESSFUL
+  return res.status(200).json({ success: true, message: 'Login successful' });
+}
+///////////////////
 }

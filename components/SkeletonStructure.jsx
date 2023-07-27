@@ -8,7 +8,7 @@ const SkeletonStructure = ({loading, setLoading})=>{
           setLoading(false);
         }, 2000);
         return () => clearTimeout(delay);
-      }, []);
+      }, [setLoading]);
 
     return (
         <>

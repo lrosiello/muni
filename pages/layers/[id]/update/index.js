@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { updating } from "../../../../services/apiCalls";
 import { Modal, Button, Group, Box, Text } from "@mantine/core";
 
 export default function UpdateLayer() {
-  var ranonce = false;
+  const isFirstRender = useRef(true);
   const router = useRouter();
   const { jsonData } = router.query;
-  const parsedJsonData = JSON.parse(decodeURIComponent(jsonData));
+  const parsedJsonData = jsonData
+    ? JSON.parse(decodeURIComponent(jsonData))
+    : null;
   const { id } = router.query;
 
   const [loading, setLoading] = useState(true);
@@ -16,39 +18,40 @@ export default function UpdateLayer() {
   const [showLayer, setShowLayer] = useState([]);
 
   useEffect(() => {
-    if (!ranonce) {
-      updatingLayer();
-      ranonce = true;
-    }
-  }, []);
+    const updatingLayer = async () => {
+      try {
+        const response = await updating(
+          `${process.env.NEXT_PUBLIC_URL}/api/layers/${id}`,
+          parsedJsonData,
+          "layers"
+        );
 
-  const updatingLayer = async () => {
-    try {
-      const response = await updating(
-        `${process.env.NEXT_PUBLIC_URL}/api/layers/${id}`,
-        parsedJsonData,
-        "layers"
-      );
+        if (response.error) {
+          setErrorMessage(response.error);
+        } else {
+          setSuccessMessage("Element Updated Successfully");
+          const updatedLayer = [response.layer];
+          setShowLayer(updatedLayer);
+        }
 
-      if (response.error) {
-        setErrorMessage(response.error);
-      } else {
-        setSuccessMessage("Element Updated Successfully");
-        const updatedLayer = [response.layer];
-        setShowLayer(updatedLayer);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error updating layer: ", error);
+        setErrorMessage("Error updating layer: " + error.message);
+        setLoading(false);
       }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Error updating layer: ", error);
-      setErrorMessage("Error updating layer: " + error.message);
-      setLoading(false);
+    };
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      updatingLayer();
     }
-  };
+  }, [id, parsedJsonData]);
+
 
   const handleClose = () => {
     router.push("/layers");
   };
+  
 
   return (
     <>
@@ -62,7 +65,7 @@ export default function UpdateLayer() {
         onClose={handleClose}
         size="md"
         padding="lg"
-        hideCloseButton
+        hideclosebutton="true"
       >
         {loading ? (
           <div>Loading...</div>

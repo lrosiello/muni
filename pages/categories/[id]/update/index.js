@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { updating } from "../../../../services/apiCalls";
 import { Modal, Button, Group, Box, Text } from "@mantine/core";
 
 export default function UpdateCategory() {
-  var ranonce = false;
+  const isFirstRender = useRef(true);
   const router = useRouter();
   const { jsonData } = router.query;
-  const parsedJsonData = JSON.parse(decodeURIComponent(jsonData));
+  const parsedJsonData = jsonData ? JSON.parse(decodeURIComponent(jsonData)) : null;
   const { id } = router.query;
 
   const [loading, setLoading] = useState(true);
@@ -16,35 +16,36 @@ export default function UpdateCategory() {
   const [showCategory, setShowCategory] = useState([]);
 
   useEffect(() => {
-    if (!ranonce) {
-      updatingCategory();
-      ranonce = true;
-    }
-  }, []);
-
-  const updatingCategory = async () => {
-    try {
-      const response = await updating(
-        `${process.env.NEXT_PUBLIC_URL}/api/categories/${id}`,
-        parsedJsonData,
-        "categories"
-      );
-
-      if (response.error) {
-        setErrorMessage(response.error);
-      } else {
-        setSuccessMessage("Element Updated Successfully");
-        const updatedCategory = [response.category];
-        setShowCategory(updatedCategory);
+    const updatingCategory = async () => {
+      try {
+        const response = await updating(
+          `${process.env.NEXT_PUBLIC_URL}/api/categories/${id}`,
+          parsedJsonData,
+          "categories"
+        );
+  
+        if (response.error) {
+          setErrorMessage(response.error);
+        } else {
+          setSuccessMessage("Element Updated Successfully");
+          const updatedCategory = [response.category];
+          setShowCategory(updatedCategory);
+        }
+  
+        setLoading(false);
+      } catch (error) {
+        console.error("Error updating category: ", error);
+        setErrorMessage("Error updating category: " + error.message);
+        setLoading(false);
       }
-
-      setLoading(false);
-    } catch (error) {
-      console.error("Error updating category: ", error);
-      setErrorMessage("Error updating category: " + error.message);
-      setLoading(false);
+    };
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      updatingCategory();
     }
-  };
+  }, [id, parsedJsonData]);
+
+  
 
   const handleClose = () => {
     router.push("/categories");
@@ -62,7 +63,7 @@ export default function UpdateCategory() {
         onClose={handleClose}
         size="md"
         padding="lg"
-        hideCloseButton
+        hideclosebutton="true"
       >
         {loading ? (
           <div>Loading...</div>
