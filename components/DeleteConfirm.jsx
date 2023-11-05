@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 export default function DeleteConfirm(props) {
   const { data, id, action, tableName } = props;
   const router = useRouter();
-    console.log(tableName)
   const handleCancel = () => {
     router.back();
   };
@@ -31,7 +30,9 @@ export default function DeleteConfirm(props) {
           paddingRight:"20%",
         }}
       >
-        <Text>Are you sure to delete this element?</Text>
+        <Text>Are you sure to delete this element?<br/>
+        {tableName === "categories" ? <Text color="red">Being a category, it would delete every layer it had</Text> : null}
+        </Text>
         <Divider style={{ margin: "10px" }} />
         <Box style={{ alignSelf: "center", marginBottom: "10px" }}>
           <Text>

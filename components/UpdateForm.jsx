@@ -117,11 +117,25 @@ export default function UpdateForm({ tableName, data, id }) {
           return (
             <Box key={column} style={{ marginBottom: "10px" }}>
               <Text>{column}</Text>
+              {formData[column] || column === "description" ? (
               <Input
+              placeholder={`Enter ${column}`}
+              value={formData[column] || ""}
+              onChange={(e) => handleInputChange(e.target.value, column)}
+              />
+            ) : (
+              <Input.Wrapper
+                id="input-demo"
+                withAsterisk
+                error="this label is required"
+              >
+                <Input
                 placeholder={`Enter ${column}`}
                 value={formData[column] || ""}
                 onChange={(e) => handleInputChange(e.target.value, column)}
               />
+              </Input.Wrapper>
+            )}
             </Box>
           );
         })}

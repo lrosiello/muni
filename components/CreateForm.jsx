@@ -90,6 +90,7 @@ export default function CreateForm({ tableName, columns, onClose }) {
                 <Select
                   data={["true", "false"]}
                   placeholder="Select value"
+                  error={formData[column] === undefined ? "This label is required" : null}
                   onChange={(value) => handleInputChange(value, column)}
                 />
               </Box>
@@ -103,6 +104,7 @@ export default function CreateForm({ tableName, columns, onClose }) {
                 <Select
                   data={categories.map((category) => category.category_name)}
                   placeholder="Select category"
+                  error={formData[column] === undefined ? "This label is required" : null}
                   onChange={(value) => handleInputChange(value, column)}
                 />
               </Box>
